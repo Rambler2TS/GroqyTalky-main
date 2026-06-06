@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GroqyTalky v0.31 — User Guide</title>
+<style>
+  :root {
+    --bg:       #1a1a2e;
+    --surface:  #252538;
+    --card:     #2a2a42;
+    --border:   #3a3a5a;
+    --accent:   #5599ff;
+    --accent2:  #88bbff;
+    --green:    #66dd88;
+    --yellow:   #ffcc44;
+    --red:      #ff5555;
+    --text:     #d0d0e8;
+    --muted:    #8888aa;
+    --heading:  #ccccff;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: "Segoe UI", system-ui, sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    background: var(--bg);
+    color: var(--text);
+    padding: 0 0 60px;
+  }
+
+  /* ── Top banner ── */
+  header {
+    background: #13132a;
+    border-bottom: 2px solid var(--border);
+    padding: 36px 48px 28px;
+    text-align: center;
+  }
+  header h1 { font-size: 2.6rem; color: var(--heading); letter-spacing: -0.5px; }
+  header .version {
+    display: inline-block;
+    margin: 6px 0 10px;
+    padding: 3px 14px;
+    border-radius: 20px;
+    background: var(--surface);
+    color: var(--accent);
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+  }
+  header p { color: var(--muted); font-size: 1rem; max-width: 560px; margin: 0 auto; }
+
+  /* ── Layout ── */
+  .page { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+
+  /* ── Section titles ── */
+  h2 {
+    color: var(--heading);
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 48px 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  h2 .icon { font-size: 1.2rem; }
+
+  h3 { color: var(--accent2); font-size: 1rem; margin: 22px 0 8px; }
+
+  /* ── Cards ── */
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px 24px;
+    margin: 14px 0;
+  }
+  .card p + p { margin-top: 8px; }
+
+  /* ── Numbered steps ── */
+  ol.steps { list-style: none; counter-reset: step; padding: 0; }
+  ol.steps li {
+    counter-increment: step;
+    display: flex;
+    gap: 14px;
+    align-items: flex-start;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  ol.steps li:last-child { border-bottom: none; }
+  ol.steps li::before {
+    content: counter(step);
+    flex-shrink: 0;
+    width: 28px; height: 28px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.85rem;
+    display: flex; align-items: center; justify-content: center;
+    margin-top: 2px;
+  }
+
+  /* ── Bullets ── */
+  ul.bullets { list-style: none; padding: 0; }
+  ul.bullets li {
+    padding: 5px 0 5px 22px;
+    position: relative;
+    color: var(--text);
+  }
+  ul.bullets li::before {
+    content: "▸";
+    position: absolute; left: 0;
+    color: var(--accent);
+  }
+
+  /* ── Tray status pills ── */
+  .pills { display: flex; flex-wrap: wrap; gap: 10px; margin: 12px 0; }
+  .pill {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 8px 16px;
+    font-size: 0.9rem;
+  }
+  .dot {
+    width: 18px; height: 18px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot-grey   { background: #808080; }
+  .dot-red    { background: #dc2828; }
+  .dot-yellow { background: #e6c828; }
+
+  /* ── Tray menu table ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 12px 0;
+    font-size: 0.93rem;
+  }
+  th {
+    text-align: left;
+    color: var(--muted);
+    font-weight: 600;
+    font-size: 0.8rem;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    padding: 6px 12px;
+    border-bottom: 1px solid var(--border);
+  }
+  td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+  tr:last-child td { border-bottom: none; }
+  td:first-child { color: var(--accent2); white-space: nowrap; font-weight: 600; }
+
+  /* ── Callout boxes ── */
+  .callout {
+    border-left: 4px solid;
+    border-radius: 0 8px 8px 0;
+    padding: 12px 18px;
+    margin: 16px 0;
+    font-size: 0.93rem;
+  }
+  .callout-tip   { border-color: var(--green);  background: #1a2e22; }
+  .callout-warn  { border-color: var(--yellow); background: #2a2410; }
+  .callout-info  { border-color: var(--accent); background: #1a2040; }
+  .callout strong { display: block; margin-bottom: 4px; }
+  .callout-tip   strong { color: var(--green);  }
+  .callout-warn  strong { color: var(--yellow); }
+  .callout-info  strong { color: var(--accent2); }
+
+  /* ── Hotkey badge ── */
+  kbd {
+    display: inline-block;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: 2px 8px;
+    font-family: "Segoe UI", monospace;
+    font-size: 0.88rem;
+    color: var(--heading);
+  }
+
+  /* ── Links ── */
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; color: var(--accent2); }
+
+  /* ── Footer ── */
+  footer {
+    text-align: center;
+    color: var(--muted);
+    font-size: 0.82rem;
+    margin-top: 60px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>GroqyTalky</h1>
+  <span class="version">v0.31</span>
+  <p>Hold a hotkey, speak naturally, and your cleaned-up words appear wherever your cursor is.</p>
+</header>
+
+<div class="page">
+
+  <!-- ═══════════════════════════════════════════ WHAT IS IT -->
+  <h2><span class="icon">💬</span> What Does It Do?</h2>
+  <div class="card">
+    <p>GroqyTalky is a Windows voice-to-text tool that lives quietly in your system tray. Hold your
+    chosen hotkey, say what you want to type, and release. Within a second or two, the cleaned-up
+    text appears at your cursor — ready to use in any application: emails, documents, chat windows,
+    search boxes, anywhere.</p>
+    <p style="margin-top:12px;">Under the hood it uses two AI services from Groq (both free at normal usage levels):
+    the <strong>Whisper</strong> model to convert your speech to text, and a <strong>large language
+    model</strong> to silently remove filler words (ums, uhs, false starts) before pasting.</p>
+  </div>
+
+  <div class="callout callout-info">
+    <strong>Requirements</strong>
+    Windows 10 or 11 &nbsp;·&nbsp; Internet connection &nbsp;·&nbsp; Free Groq account
+    (sign up at <a href="https://console.groq.com" target="_blank">console.groq.com</a>)
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════ INSTALLATION -->
+  <h2><span class="icon">📦</span> Installation</h2>
+
+  <ol class="steps">
+    <li>
+      <div>
+        <strong>Unzip the downloaded file</strong><br>
+        Extract <code>GroqyTalky-installer.zip</code> to any folder. You will see four files:
+        <code>GroqyTalky.exe</code>, <code>Run Me to Install GroqyTalky.bat</code>,
+        <code>installer-core.ps1</code>, and <code>readme.htm</code>. Keep all four together.
+      </div>
+    </li>
+    <li>
+      <div>
+        <strong>Run the installer</strong><br>
+        Double-click <strong>Run Me to Install GroqyTalky.bat</strong>. A black console window will appear
+        briefly, then a folder-picker dialog will open.
+      </div>
+    </li>
+    <li>
+      <div>
+        <strong>Choose your install folder</strong><br>
+        Pick where you want GroqyTalky to live. The default
+        (<code>C:\Users\YourName\AppData\Local\GroqyTalky</code>) works well and requires no
+        administrator password. Click OK.
+      </div>
+    </li>
+    <li>
+      <div>
+        <strong>Shortcuts are created automatically</strong><br>
+        The installer adds a shortcut to your Desktop and Start Menu, and registers GroqyTalky in
+        Windows <em>Settings → Apps</em> so you can uninstall it cleanly later.
+      </div>
+    </li>
+    <li>
+      <div>
+        <strong>Launch GroqyTalky</strong><br>
+        Double-click the Desktop shortcut. The first-time Setup Wizard will open automatically.
+      </div>
+    </li>
+  </ol>
+
+  <div class="callout callout-warn">
+    <strong>Troubleshooting the installer</strong>
+    If the installer window flashes and closes instantly, make sure all four files
+    (<code>GroqyTalky.exe</code>, <code>Run Me to Install GroqyTalky.bat</code>,
+    <code>installer-core.ps1</code>, <code>readme.htm</code>) are in the <em>same folder</em>
+    before running the bat file. The console window will show an error message if something
+    is wrong — it will not close until you press a key.
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════ FIRST-TIME SETUP -->
+  <h2><span class="icon">🔑</span> First-Time Setup</h2>
+  <p>When GroqyTalky launches for the first time, a Setup Wizard opens. Complete the steps below.</p>
+
+  <h3>Step 1 — Get Your Free Groq API Key</h3>
+  <div class="card">
+    <ol class="steps">
+      <li><div>Go to <a href="https://console.groq.com" target="_blank">console.groq.com</a> and create a free account (or sign in if you have one).</div></li>
+      <li><div>Click <strong>API Keys</strong> in the top navigation bar.</div></li>
+      <li><div>Click the <strong>Create API Key</strong> button.</div></li>
+      <li><div>Give it any name — it does not matter. Something like <em>"GroqyTalky key"</em> is fine.</div></li>
+      <li><div>Click <strong>Submit</strong>, then copy the long key that appears on screen.</div></li>
+    <div class="callout callout-warn" style="margin-top:14px;">
+      <strong>Copy the key before closing that page!</strong>
+      Groq only shows the full key once. If you close the page without copying it, you will need
+      to create a new key.
+    </div>
+      <li><div>Paste the key into the <em>Paste your key here</em> field in the Setup Wizard and click <strong>Save &amp; Start</strong>.</div></li>
+    </ol>
+  </div>
+
+  <h3>Step 2 — Set Your Recording Hotkey</h3>
+  <div class="card">
+    <p>Click the <strong>Click to Assign Hotkey</strong> button in the wizard. The button turns red
+    and starts listening. Hold the key combination you want to use for at least 0.3 seconds, then
+    release. The display updates in real-time as you press keys so you can see exactly what was
+    recorded.</p>
+    <p style="margin-top:10px;"><strong>Good hotkey choices:</strong> something you would never
+    accidentally press while typing. Examples: <kbd>Right Alt</kbd> alone, <kbd>Ctrl</kbd> +
+    <kbd>Win</kbd>, <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>F9</kbd>.</p>
+    <div class="callout callout-tip" style="margin-top:14px;">
+      <strong>Tip</strong>
+      Avoid hotkeys that conflict with your other software. If the app does not seem to trigger,
+      open Settings from the tray and reassign a different combo.
+    </div>
+  </div>
+
+  <h3>Preferences</h3>
+  <div class="card">
+    <p>The wizard includes a <strong>Media Ducking</strong> checkbox. When enabled, GroqyTalky
+    automatically lowers the volume of all other apps (music, video, etc.) to 10% while you are
+    recording, then restores them the moment recording stops. This makes it much easier to hear
+    yourself speak without permanently changing any volume settings.</p>
+    <p style="margin-top:8px;">This setting can also be changed later from
+    <em>Settings / Change Hotkey</em> in the tray menu.</p>
+  </div>
+
+  <h3>Step 3 — Find the Tray Icon</h3>
+  <div class="card">
+    <p>After saving, GroqyTalky disappears from view — it runs entirely from the system tray
+    (the small icons near the clock in the bottom-right corner of your screen).</p>
+    <p style="margin-top:10px;"><strong>If you do not see it:</strong> look for a small
+    <strong>^</strong> arrow next to the clock and click it to expand hidden tray icons. Find
+    the circle icon and drag it out onto the main taskbar so it is always visible.</p>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════ HOW TO USE -->
+  <h2><span class="icon">🎙️</span> How to Use It</h2>
+
+  <h3>Hold-to-Talk (quick dictation)</h3>
+  <div class="card">
+    <p>Hold your hotkey, speak, then release. Recording starts after you hold the key for about
+    0.3 seconds and stops the moment you let go. The text is transcribed, cleaned up, and pasted
+    at your cursor automatically.</p>
+  </div>
+
+  <h3>Double-Tap to Latch (hands-free dictation)</h3>
+  <div class="card">
+    <p>Tap the hotkey <strong>twice quickly</strong> (within about 0.45 seconds). Recording latches
+    on so you can speak freely without holding anything. Press the hotkey once more when you are
+    done and the text will be transcribed and pasted.</p>
+  </div>
+
+  <!-- Tray status colors -->
+  <h3>Tray Icon Colors</h3>
+  <div class="pills">
+    <div class="pill"><div class="dot dot-grey"></div><div><strong>Grey</strong> — idle, ready to record</div></div>
+    <div class="pill"><div class="dot dot-red"></div><div><strong>Red</strong> — recording in progress</div></div>
+    <div class="pill"><div class="dot dot-yellow"></div><div><strong>Yellow</strong> — transcribing &amp; processing</div></div>
+  </div>
+  <p style="color:var(--muted);font-size:0.9rem;margin-top:4px;">You also hear a short beep when recording starts and another when it stops.</p>
+
+  <div class="callout callout-tip">
+    <strong>Best results</strong>
+    Speak at a normal pace and volume. You do not need to slow down or over-enunciate. The AI
+    handles "ums", "uhs", and false starts automatically — just talk naturally.
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════ TRAY MENU -->
+  <h2><span class="icon">🖱️</span> Tray Menu Reference</h2>
+  <p>Right-click the tray icon to access all options.</p>
+
+  <table>
+    <thead>
+      <tr><th>Menu Item</th><th>What It Does</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Settings / Change Hotkey</td>
+        <td>Re-opens the Setup Wizard so you can update your API key or reassign the recording hotkey.</td>
+      </tr>
+      <tr>
+        <td>Edit System Prompt…</td>
+        <td>Advanced: customize the AI instructions used to clean up transcribed speech. A Reset to
+        Default button is available inside this window. Most users never need to touch this.</td>
+      </tr>
+      <tr>
+        <td>Retry Last Recording</td>
+        <td>Re-sends the most recent recording for transcription. Useful if the previous attempt
+        failed due to a network issue. The last recording is always saved to disk so it survives
+        even if you restart the app.</td>
+      </tr>
+      <tr>
+        <td>View Readme / Help</td>
+        <td>Opens this user guide in your browser.</td>
+      </tr>
+      <tr>
+        <td>View Logs</td>
+        <td>Opens the transcription log file (<code>ramblings_log.txt</code>) in Notepad. Each entry
+        shows the timestamp, raw transcript, and cleaned-up version. Newest entries appear at the
+        top.</td>
+      </tr>
+      <tr>
+        <td>Usage Stats</td>
+        <td>Shows how many transcriptions you have done this session, this month, and in total.</td>
+      </tr>
+      <tr>
+        <td>Open config.json</td>
+        <td>Opens the settings file directly. Advanced users can hand-edit hotkeys, thresholds, and
+        the system prompt here. Back it up before making changes.</td>
+      </tr>
+      <tr>
+        <td>Quit</td>
+        <td>Stops GroqyTalky completely. It will not restart until you launch it again.</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <!-- ═══════════════════════════════════════════ FILES -->
+  <h2><span class="icon">📁</span> Files Created by GroqyTalky</h2>
+  <p>All files are stored in the folder where you installed the app — nothing is written to hidden system locations.</p>
+
+  <table>
+    <thead>
+      <tr><th>File</th><th>What It Contains</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>.env</td>
+        <td>Your Groq API key (stored locally, never transmitted anywhere except to Groq).</td>
+      </tr>
+      <tr>
+        <td>config.json</td>
+        <td>Your hotkey assignment and other preferences.</td>
+      </tr>
+      <tr>
+        <td>ramblings_log.txt</td>
+        <td>A running log of every transcription (timestamp, raw audio text, cleaned text). Newest
+        entries are at the top.</td>
+      </tr>
+      <tr>
+        <td>last_recording.wav</td>
+        <td>The most recent audio recording. Overwritten each time you record. Used by
+        <em>Retry Last Recording</em> if a transcription fails.</td>
+      </tr>
+      <tr>
+        <td>data\usage_stats.json</td>
+        <td>Transcription counts (session, monthly, lifetime).</td>
+      </tr>
+    </tbody>
+  </table>
+
+
+  <!-- ═══════════════════════════════════════════ UNINSTALL -->
+  <h2><span class="icon">🗑️</span> Uninstalling</h2>
+  <div class="card">
+    <p>Open <strong>Windows Settings → Apps</strong> (or <em>Control Panel → Programs and Features</em>),
+    find <strong>GroqyTalky</strong> in the list, and click Uninstall. Alternatively, run
+    <code>Uninstall-GroqyTalky.ps1</code> directly from the install folder.</p>
+    <p style="margin-top:10px;">The uninstaller removes the executable, all data files
+    (<code>.env</code>, <code>config.json</code>, <code>ramblings_log.txt</code>,
+    <code>last_recording.wav</code>, <code>data\</code>), both shortcuts, and the Programs &amp;
+    Features entry.</p>
+  </div>
+
+
+  <!-- ═══════════════════════════════════════════ TROUBLESHOOTING -->
+  <h2><span class="icon">🔧</span> Troubleshooting</h2>
+
+  <h3>Transcription quality is poor or words are wrong</h3>
+  <div class="card">
+    <ul class="bullets">
+      <li>Open <strong>Windows Sound Settings → your microphone → Properties → Enhancements</strong>
+      and disable any noise suppression, echo cancellation, or audio enhancements. These can make
+      the audio sound muddy to Whisper.</li>
+      <li>Make sure you are using the correct microphone. In Windows Sound Settings, set your
+      preferred mic as the default recording device.</li>
+      <li>Speak closer to the microphone and reduce background noise.</li>
+      <li>If a transcription failed mid-session, use <em>Retry Last Recording</em> from the tray
+      once your connection is restored.</li>
+    </ul>
+  </div>
+
+  <h3>The hotkey does not trigger recording</h3>
+  <div class="card">
+    <ul class="bullets">
+      <li>Check that the tray icon is grey (idle) — if it is yellow, a previous transcription is
+      still processing.</li>
+      <li>Some hotkeys conflict with Windows or other software. Right-click the tray → <em>Settings
+      / Change Hotkey</em> to assign a different combination.</li>
+      <li>Try running GroqyTalky as Administrator if other software is capturing the same hotkey.</li>
+    </ul>
+  </div>
+
+  <h3>Transcription fails / error message appears</h3>
+  <div class="card">
+    <ul class="bullets">
+      <li>Check your internet connection — GroqyTalky requires internet access to reach the Groq API.</li>
+      <li>Verify your API key is still valid at
+      <a href="https://console.groq.com" target="_blank">console.groq.com</a>. If it has been
+      deleted or expired, create a new one and paste it in via <em>Settings / Change Hotkey</em>.</li>
+      <li>Your recording is saved as <code>last_recording.wav</code>. Use <em>Retry Last
+      Recording</em> from the tray once the issue is resolved.</li>
+    </ul>
+  </div>
+
+  <h3>Text is pasted in the wrong place or not pasted at all</h3>
+  <div class="card">
+    <ul class="bullets">
+      <li>Click inside the text field or document where you want the text <em>before</em> you press
+      the hotkey. GroqyTalky pastes using Ctrl+V at wherever the cursor is at the end of
+      processing.</li>
+      <li>Some applications block programmatic paste. Try using a plain text editor like Notepad
+      to confirm pasting works, then investigate the specific app.</li>
+    </ul>
+  </div>
+
+  <h3>The tray icon is not visible</h3>
+  <div class="card">
+    <p>Windows hides new tray icons by default. Click the <strong>^</strong> arrow near your clock
+    to expand hidden icons, find the GroqyTalky circle, and drag it out onto the main taskbar to
+    keep it permanently visible.</p>
+  </div>
+
+</div><!-- /page -->
+
+<footer>
+  <div class="page">
+    GroqyTalky v0.31 &nbsp;·&nbsp; Windows only &nbsp;·&nbsp;
+    Powered by <a href="https://groq.com" target="_blank">Groq</a> Whisper &amp; LLaMA
+  </div>
+</footer>
+
+</body>
+</html>

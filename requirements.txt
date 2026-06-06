@@ -1,0 +1,10 @@
+pynput
+pyautogui
+groq
+sounddevice
+scipy
+pyperclip
+python-dotenv
+pystray
+Pillow
+pycaw
