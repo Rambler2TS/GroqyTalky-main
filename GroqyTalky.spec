@@ -5,7 +5,7 @@ a = Analysis(
     ['groqytalky.py'],
     pathex=[],
     binaries=[],
-    datas=[],
+    datas=[('Icons/*.ico', 'Icons')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},

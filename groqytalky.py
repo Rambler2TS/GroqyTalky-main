@@ -1,5 +1,5 @@
 """
-GroqyTalky v0.31 — tray, HUD, keyboard listener, Groq pipeline, and Setup Wizard.
+GroqyTalky v0.41 — tray, HUD, keyboard listener, Groq pipeline, and Setup Wizard.
 
 Startup flow:
   1. config.py runs the macOS guard on import.
@@ -47,6 +47,16 @@ def _beep_async(frequency: int, duration_ms: int) -> None:
 
 def _solid_icon(rgb: tuple[int, int, int]) -> Image.Image:
     return Image.new("RGB", (64, 64), rgb)
+
+
+def _load_tray_icon(filename: str, fallback_rgb: tuple[int, int, int]) -> Image.Image:
+    """Load a .ico file from the Icons folder; fall back to a solid colour if missing."""
+    try:
+        path = config.icons_dir() / filename
+        img = Image.open(path).convert("RGBA").resize((64, 64), Image.LANCZOS)
+        return img
+    except Exception:
+        return _solid_icon(fallback_rgb)
 
 
 # ---------------------------------------------------------------------------
@@ -428,7 +438,7 @@ class SetupWizard:
         self._win = win
         win.title("GroqyTalky Setup")
         win.configure(bg="#1e1e2e")
-        win.resizable(False, False)
+        win.resizable(True, True)
         win.protocol("WM_DELETE_WINDOW", self._on_close)
 
         if self._modal:
@@ -448,15 +458,16 @@ class SetupWizard:
         # Footer always visible below the scroll area
         self._build_footer(win)
 
-        # Center on screen, capping height at 88 % of screen height
+        # Center on screen; derive width from inner scroll frame content, cap height at 88%
         win.update_idletasks()
-        req_w = win.winfo_reqwidth()
+        content_w = scroll_frame.winfo_reqwidth() + 40  # 40px: scrollbar + chrome
         req_h = win.winfo_reqheight()
         sw = win.winfo_screenwidth()
         sh = win.winfo_screenheight()
+        final_w = max(content_w, 480)
         max_h = int(sh * 0.88)
         final_h = min(req_h, max_h)
-        win.geometry(f"{req_w}x{final_h}+{(sw - req_w) // 2}+{(sh - final_h) // 2}")
+        win.geometry(f"{final_w}x{final_h}+{(sw - final_w) // 2}+{(sh - final_h) // 2}")
 
     def _build_scroll_area(self, win: tk.Toplevel) -> tk.Frame:
         """Wrap a scrollable canvas between the header and footer; return the inner Frame."""
@@ -1013,9 +1024,9 @@ class VoiceAssistantApp:
         self._hud = RecordingHud(self._root)
 
         self._images = {
-            self.TRAY_IDLE: _solid_icon(config.TRAY_COLOR_IDLE),
-            self.TRAY_RECORDING: _solid_icon(config.TRAY_COLOR_RECORDING),
-            self.TRAY_PROCESSING: _solid_icon(config.TRAY_COLOR_PROCESSING),
+            self.TRAY_IDLE: _load_tray_icon("groqytalky.ico", config.TRAY_COLOR_IDLE),
+            self.TRAY_RECORDING: _load_tray_icon("groqytalky_recording.ico", config.TRAY_COLOR_RECORDING),
+            self.TRAY_PROCESSING: _load_tray_icon("groqytalky_processing.ico", config.TRAY_COLOR_PROCESSING),
         }
 
     # ------------------------------------------------------------------

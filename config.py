@@ -27,6 +27,13 @@ _APP_DIR: Path = (
     if getattr(sys, "frozen", False)
     else Path(sys.argv[0]).resolve().parent
 )
+# Bundled assets (icons etc.) are extracted to sys._MEIPASS in a frozen exe,
+# not to _APP_DIR. In dev mode they live beside the script.
+_BUNDLE_DIR: Path = (
+    Path(sys._MEIPASS)  # type: ignore[attr-defined]
+    if getattr(sys, "frozen", False)
+    else Path(sys.argv[0]).resolve().parent
+)
 DOTENV_PATH: Path = _APP_DIR / ".env"
 CONFIG_JSON_PATH: Path = _APP_DIR / "config.json"
 DATA_DIR: Path = _APP_DIR / "data"
@@ -260,7 +267,7 @@ TRAY_COLOR_IDLE: tuple[int, int, int] = (128, 128, 128)
 TRAY_COLOR_RECORDING: tuple[int, int, int] = (220, 40, 40)
 TRAY_COLOR_PROCESSING: tuple[int, int, int] = (230, 200, 40)
 
-APP_VERSION: str = "0.31"
+APP_VERSION: str = "0.41"
 
 # ---------------------------------------------------------------------------
 # Path helpers
@@ -284,6 +291,10 @@ def usage_stats_path() -> Path:
 
 def config_file_path() -> Path:
     return CONFIG_JSON_PATH
+
+
+def icons_dir() -> Path:
+    return _BUNDLE_DIR / "Icons"
 
 
 def needs_first_run_wizard() -> bool:

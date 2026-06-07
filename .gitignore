@@ -1,0 +1,21 @@
+# Secrets — never commit these
+.env
+config.json
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# PyInstaller scratch folders
+build/
+
+# Compiled exe (already inside the distributable zip)
+dist/*.exe
+
+# App runtime files
+data/
+last_recording.wav
+ramblings_log.txt
+
+# Claude Code working files
+.claude/
