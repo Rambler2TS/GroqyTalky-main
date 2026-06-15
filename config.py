@@ -267,7 +267,7 @@ TRAY_COLOR_IDLE: tuple[int, int, int] = (128, 128, 128)
 TRAY_COLOR_RECORDING: tuple[int, int, int] = (220, 40, 40)
 TRAY_COLOR_PROCESSING: tuple[int, int, int] = (230, 200, 40)
 
-APP_VERSION: str = "0.41"
+APP_VERSION: str = "0.42"
 
 # ---------------------------------------------------------------------------
 # Path helpers

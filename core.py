@@ -23,6 +23,7 @@ import pyautogui
 import pyperclip
 import sounddevice as sd
 from groq import Groq
+from pynput.keyboard import Controller as _KeyboardController, Key as _Key
 from scipy.io.wavfile import write as wav_write
 
 try:
@@ -36,6 +37,7 @@ import config
 log = logging.getLogger(__name__)
 
 pyautogui.FAILSAFE = False
+_kb_ctrl = _KeyboardController()
 
 _stats_lock = threading.Lock()
 _session_transcriptions = 0
@@ -458,6 +460,14 @@ def paste_text(text: str) -> None:
         return
     pyperclip.copy(text)
     time.sleep(config.CLIPBOARD_PASTE_DELAY)
+    # Flush any modifier keys Windows may still see as held (Win key is the
+    # common culprit when released via a pynput low-level hook).
+    for _k in (_Key.cmd_l, _Key.cmd_r, _Key.ctrl_l, _Key.ctrl_r,
+               _Key.shift_l, _Key.shift_r, _Key.alt_l, _Key.alt_r):
+        try:
+            _kb_ctrl.release(_k)
+        except Exception:
+            pass
     pyautogui.hotkey("ctrl", "v")
 
 

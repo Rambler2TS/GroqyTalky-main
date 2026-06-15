@@ -1,5 +1,5 @@
 """
-GroqyTalky v0.41 — tray, HUD, keyboard listener, Groq pipeline, and Setup Wizard.
+GroqyTalky v0.42 — tray, HUD, keyboard listener, Groq pipeline, and Setup Wizard.
 
 Startup flow:
   1. config.py runs the macOS guard on import.
