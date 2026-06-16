@@ -39,6 +39,10 @@ else:
             data = ctypes.cast(lpdata, self._LPKBDLLHOOKSTRUCT).contents
             if int(data.vkCode) != self.VK_LWIN:
                 return False
+            # Always let keyup through so Windows can clear Win from its key
+            # state — suppressing keyup is what causes the stuck-Win bug.
+            if msg in (0x0101, 0x0105):  # WM_KEYUP, WM_SYSKEYUP
+                return False
             if not (ctypes.windll.user32.GetAsyncKeyState(self.VK_LCONTROL) & 0x8000):
                 return False
             return True

@@ -11,7 +11,7 @@
 param()
 
 $AppName    = "GroqyTalky"
-$AppVersion = "0.42"
+$AppVersion = "0.43"
 $ExeName    = "GroqyTalky.exe"
 $ReadmeName = "readme.htm"
 
